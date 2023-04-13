@@ -75,27 +75,127 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-12 d-flex justify-content-center mt-5">
-                    <div id="circle"></div>
+                <div class="col-12 mt-4 d-flex justify-content-center">
+                    <h5 id="time"></h5>
                 </div>
             </div>
+            <div class="row" id="circle-row">
+                <div class="col-12 mt-1">
+                    <div id="circle" class="position-absolute"></div>
+                </div>
+            </div>
+            
         </div>
     </div>
 </body>
 
 <script>
     function startSimulation(){
+        //Variáveis para armazenar o time
+        var startTime;
+        var stopTime;
+        var timerId;
+        var pressedOk = false;
+
+        // Retirar texto com o tempo ao iniciar novamente a simulação
+        var timeElement = document.getElementById("time");
+        timeElement.innerHTML = "";
+
+        //Definição da cor e da posição do círculo de forma aleatória
         var circle = document.getElementById("circle");
 		var color = getRandomColor();
+        var x = getRandomX();
+        var y = getRandomY();
+
+        circle.style.left = x + "px";
+        circle.style.top = y + "px";
 		circle.style.backgroundColor = color;
+
+        //Inicializa a contagem do tempo
+        startTime = new Date().getTime(); 
+
+        //Define evento de tecla pressionada, enviando também os parâmetros de cor e tempo inicial
+        function handleKeyDown(event) {
+            checkKey(event, color, startTime);
+        }
+
+        // Escuta eventos no momento em que usuário pressiona tecla
+        document.addEventListener("keydown", handleKeyDown);      
     }
 
+    //Retorna uma das 4 cores de forma aleatória
     function getRandomColor(){
         var list_colors = ["#F53838", "#FFCD19", "#20529E", "#0AB804"];
         var randomNumber = Math.floor(Math.random() * 4);
         color = list_colors[randomNumber];
         return color;
     }
+
+    //Retorna uma posição aleatória para o eixo X do círculo
+    function getRandomX(){
+        var div = document.getElementById("circle-row");
+        var width = div.offsetWidth;
+        var x = Math.floor(Math.random() * width); 
+        return x;
+    }
+
+    //Retorna uma posição aleatória para o eixo Y do círculo
+    function getRandomY(){
+        var div = document.getElementById("circle-row");
+        var height = div.offsetHeight;
+        var y = Math.floor(Math.random() * height); 
+        return y;
+    }
+
+    // Verifica se o usuário pressionou a tecla correta para a cor mostrada na tela
+    function checkKey(event, color, startTime) {
+        if (event.key === "a"){
+            if(color == "#F53838"){
+                stopTime = new Date().getTime();
+                var elapsedTime = stopTime - startTime;
+                var timeElement = document.getElementById("time");
+                timeElement.innerHTML = "Tempo decorrido: <b>" + elapsedTime + "</b> ms. Clique em <b> iniciar </b> para fazer uma nova simulação";
+            }else{
+                var timeElement = document.getElementById("time");
+                timeElement.innerHTML = "Tecla <b style='color: #F53838;'> incorreta </b> pressionada. Clique em <b> iniciar </b> para fazer uma nova simulação";
+            }
+        }
+            
+        else if (event.key === "w"){ 
+            if (color == "#FFCD19"){
+                stopTime = new Date().getTime();
+                var elapsedTime = stopTime - startTime;
+                var timeElement = document.getElementById("time");
+                timeElement.innerHTML = "Tempo decorrido: <b>" + elapsedTime + "</b> ms. Clique em <b> iniciar </b> para fazer uma nova simulação";
+            }else{
+                var timeElement = document.getElementById("time");
+                timeElement.innerHTML = "Tecla <b style='color: #F53838;'> incorreta </b> pressionada. Clique em <b> iniciar </b> para fazer uma nova simulação";
+            }
+        }
+        else if (event.key === "s"){ 
+            if (color == "#20529E"){
+                stopTime = new Date().getTime();
+                var elapsedTime = stopTime - startTime;
+                var timeElement = document.getElementById("time");
+                timeElement.innerHTML = "Tempo decorrido: <b>" + elapsedTime + "</b> ms. Clique em <b> iniciar </b> para fazer uma nova simulação";
+            }else{
+                var timeElement = document.getElementById("time");
+                timeElement.innerHTML = "Tecla <b style='color: #F53838;'> incorreta </b> pressionada. Clique em <b> iniciar </b> para fazer uma nova simulação";
+            }
+        }
+        else if (event.key === "d"){ 
+            if (color == "#0AB804"){
+                stopTime = new Date().getTime();
+                var elapsedTime = stopTime - startTime;
+                var timeElement = document.getElementById("time");
+                timeElement.innerHTML = "Tempo decorrido: <b>" + elapsedTime + "</b> ms. Clique em <b> iniciar </b> para fazer uma nova simulação";
+            }else{
+                var timeElement = document.getElementById("time");
+                timeElement.innerHTML = "Tecla <b style='color: #F53838;'> incorreta </b> pressionada. Clique em <b> iniciar </b> para fazer uma nova simulação";
+            }
+        }
+    }
+
 </script>
 
 <!--Scripts jQuery, Popper e Bootstrap-->
