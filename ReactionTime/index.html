@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!--Configurações iniciais-->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STR - Tempo de reação</title>
+
+    <!--CSS-->
+    <link rel="stylesheet" href="assets/css/bootstrap.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!--Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-between pt-4 pb-4">
+                    <img src="assets/img/logo-dca.png" alt="">
+                    <img src="assets/img/logo-ufrn.png" alt="">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="text-center">Medidor de tempo de reação</h1>
+                    <h3 class="text-center">Trabalho 1 - Unidade 1 - Sistemas de Tempo Real</h3>
+                    <h5 class="text-center mt-4">Professor: Luiz Affonso Guedes</h5>
+                    <h5 class="text-center pb-4">Discentes: Deborah Moreira e Mariana Azevedo</h5>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div class="page-body mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="text-center">Clique em <b> iniciar </b> para começar a simulação. Ao aparecer a bolinha, clique na tecla correspondente à sua cor</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mt-3">
+                    <div class="box-color py-3 px-3">
+                        <h6 class="text-center">Pressione <b style="font-size: 26px;"> A </b> para a cor</h6>
+                        <h2 class="text-center mt-3" style="color: #F53838;">VERMELHA</h2>
+                    </div>
+                </div>
+                <div class="col-md-3 mt-3">
+                    <div class="box-color py-3 px-3">
+                        <h6 class="text-center">Pressione <b style="font-size: 26px;"> W </b> para a cor</h6>
+                        <h2 class="text-center mt-3" style="color: #FFCD19;">AMARELA</h2>
+                    </div>
+                </div>
+                <div class="col-md-3 mt-3">
+                    <div class="box-color py-3 px-3">
+                        <h6 class="text-center">Pressione <b style="font-size: 26px;"> S </b> para a cor</h6>
+                        <h2 class="text-center mt-3" style="color: #20529E;">AZUL</h2>
+                    </div>
+                </div>
+                <div class="col-md-3 mt-3">
+                    <div class="box-color py-3 px-3">
+                        <h6 class="text-center">Pressione <b style="font-size: 26px;"> D </b> para a cor</h6>
+                        <h2 class="text-center mt-3" style="color: #0AB804;">VERDE</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center mt-4">
+                    <button onclick="startSimulation()">INICIAR</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center mt-5">
+                    <div id="circle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    function startSimulation(){
+        var circle = document.getElementById("circle");
+		var color = getRandomColor();
+		circle.style.backgroundColor = color;
+    }
+
+    function getRandomColor(){
+        var list_colors = ["#F53838", "#FFCD19", "#20529E", "#0AB804"];
+        var randomNumber = Math.floor(Math.random() * 4);
+        color = list_colors[randomNumber];
+        return color;
+    }
+</script>
+
+<!--Scripts jQuery, Popper e Bootstrap-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+
+</html>
