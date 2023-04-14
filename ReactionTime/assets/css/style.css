@@ -33,14 +33,21 @@ body, html {
     border-radius: 10px;
     border: 1px solid #709DE0;
     padding: 10px 20px;
+    transition: 0.2s;
 }
 
 .page-body button:hover{
     cursor: pointer;
+    background-color: #709DE0;
+    transition: 0.2s;
 }
 
 #circle {
     width: 150px;
     height: 150px;
     border-radius: 50%;
+}
+
+.resultados{
+    border: 1px solid #323232;
 }

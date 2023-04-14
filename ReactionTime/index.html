@@ -22,12 +22,12 @@
             <div class="row">
                 <div class="col-12 d-flex justify-content-between pt-4 pb-4">
                     <img src="assets/img/logo-dca.png" alt="">
+                    <h1 class="text-center">Medidor de tempo de reação</h1>
                     <img src="assets/img/logo-ufrn.png" alt="">
                 </div>
             </div>
             <div class="row">
                 <div class="col-12">
-                    <h1 class="text-center">Medidor de tempo de reação</h1>
                     <h3 class="text-center">Trabalho 1 - Unidade 1 - Sistemas de Tempo Real</h3>
                     <h5 class="text-center mt-4">Professor: Luiz Affonso Guedes</h5>
                     <h5 class="text-center pb-4">Discentes: Deborah Moreira e Mariana Azevedo</h5>
@@ -36,11 +36,12 @@
             
         </div>
     </div>
-    <div class="page-body mt-5">
+    <div class="page-body mt-4">
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <h5 class="text-center">Clique em <b> iniciar </b> para começar a simulação. Ao aparecer a bolinha, clique na tecla correspondente à sua cor</h5>
+                    <h6 class="text-center">Clique em <b> iniciar </b> para começar uma simulação com 10 tentativas. Ao aparecer a bolinha, clique na tecla correspondente à sua cor.
+                    Se você demorar mais de 5 segundos para pressionar uma tecla, será aumentada a quantidade de erros da sua tentativa.</h6>
                 </div>
             </div>
             <div class="row">
@@ -70,8 +71,23 @@
                 </div>
             </div>
             <div class="row">
+                <div class="col-3 mt-3">
+                    <p id="result"></p>
+                </div>
+                <div class="col-3 mt-3">
+                    <p id="hits">Acertos: <b> 0 </b></p>
+                </div>
+                <div class="col-3 mt-3">
+                    <p id="errors">Erros: <b> 0 </b></p>
+                </div>
+                <div class="col-3 mt-3">
+                    <p id="mean-time"></p>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-12 d-flex justify-content-center mt-4">
-                    <button onclick="startSimulation()">INICIAR</button>
+                    <button onclick="startSimulation()" class="mr-3">INICIAR</button>
+                    <button onclick="startSimulation()">RESETAR</button>
                 </div>
             </div>
             <div class="row">
@@ -84,43 +100,79 @@
                     <div id="circle" class="position-absolute"></div>
                 </div>
             </div>
-            
         </div>
     </div>
 </body>
 
 <script>
+    //Variáveis globais
+    var startTime;
+    var stopTime;
+    var timerId;
+    var count;
+    var errors;
+    var hits;
+    var totalTime;
+    var meanTime;
+
+    //Verificação se alguma tecla foi pressionada
+    function handleKeyDown(event) {
+        checkKey(event, color, startTime);
+    }
+
+    //Inicia simulação com 10 iterações
     function startSimulation(){
-        //Variáveis para armazenar o time
-        var startTime;
-        var stopTime;
-        var timerId;
-        var pressedOk = false;
+        count = 0;
+        errors = 0;
+        hits = 0;
+        meanTime = 0;
+        totalTime = 0;
 
-        // Retirar texto com o tempo ao iniciar novamente a simulação
-        var timeElement = document.getElementById("time");
-        timeElement.innerHTML = "";
+        updateText(hits, errors);
+        document.addEventListener("keydown", handleKeyDown); 
+        nextIteration();
+    }
 
-        //Definição da cor e da posição do círculo de forma aleatória
-        var circle = document.getElementById("circle");
-		var color = getRandomColor();
-        var x = getRandomX();
-        var y = getRandomY();
+    //Faz a bola aparecer com uma cor aleatória em um local aleatório a cada iteração
+    function nextIteration(){
+        if(count == 10){
+            document.removeEventListener("keydown", handleKeyDown); 
+            alert("Fim de jogo! Você acertou " + hits + " vezes e errou " + errors + " vezes. \nSeu tempo médio de reação foi: " + meanTime + "ms");
+            hits = 0;
+            errors = 0;
+            count = 0;
+            updateText(hits, errors);
+            var circle = document.getElementById("circle");
+            circle.style.backgroundColor = "#fff";
+        }else{
+            count++;
+            var circle = document.getElementById("circle");
+            var color = getRandomColor();
+            var x = getRandomX();
+            var y = getRandomY();
 
-        circle.style.left = x + "px";
-        circle.style.top = y + "px";
-		circle.style.backgroundColor = color;
+            circle.style.left = x + "px";
+            circle.style.top = y + "px";
+            circle.style.backgroundColor = color;
 
-        //Inicializa a contagem do tempo
-        startTime = new Date().getTime(); 
-
-        //Define evento de tecla pressionada, enviando também os parâmetros de cor e tempo inicial
-        function handleKeyDown(event) {
-            checkKey(event, color, startTime);
+            startTime = new Date().getTime(); 
+            verifyTimeToAnswer();
         }
 
-        // Escuta eventos no momento em que usuário pressiona tecla
-        document.addEventListener("keydown", handleKeyDown);      
+    }
+
+    // Atualiza textos ao iniciar ou resetar uma simulação
+    function updateText(hits, errors){
+        var timeElement = document.getElementById("time");
+        timeElement.innerHTML = "";
+        var hitsElement = document.getElementById("hits");
+        hitsElement.innerHTML = "Acertos: <b>" + hits + "</b>";
+        var errorsElement = document.getElementById("errors");
+        errorsElement.innerHTML = "Erros: <b>" + errors + "</b>";
+        var timeElement = document.getElementById("result");
+        timeElement.innerHTML = "";
+        var meanTimeElement = document.getElementById("mean-time");
+        meanTimeElement.innerHTML = "";
     }
 
     //Retorna uma das 4 cores de forma aleatória
@@ -147,54 +199,108 @@
         return y;
     }
 
-    // Verifica se o usuário pressionou a tecla correta para a cor mostrada na tela
+    //Verifica se o usuário demorou muito tempo (5s) para responder, se sim, contabiliza um erro
+    function verifyTimeToAnswer() {
+        let timeout= true;
+        const timeoutId = setTimeout(() => {
+            if (timeout) {
+            alert("Você demorou mais de 5s para escolher uma tecla! Isso contabilizará 1 erro em sua pontuação");
+            updateErrors();
+            nextIteration();
+            }
+        }, 5000);
+
+        document.addEventListener("keydown", () => {
+            clearTimeout(timeoutId);
+            timeout = false;
+        });
+    }
+
+    // Calcula o tempo de reação caso o usuário tenha pressionado a tecla correta
+    function reactionTime(startTime){
+        stopTime = new Date().getTime();
+        var elapsedTime = stopTime - startTime;
+        var timeElement = document.getElementById("result");
+        timeElement.innerHTML = "Tempo de reação: <b>" + elapsedTime + "</b>ms";
+        return elapsedTime;
+    }
+
+    // Mensagem informando que o usuário pressionou a tecla incorreta
+    function badKey(){
+        var timeElement = document.getElementById("result");
+        timeElement.innerHTML = "Tecla <b style='color: #F53838;'> incorreta </b> pressionada";
+    }
+
+    //Atualiza a quantidade de acertos do usuário
+    function updateHits(){
+        hits++;
+        var hitsElement = document.getElementById("hits");
+        hitsElement.innerHTML = "Acertos: <b>" + hits + "</b>";;
+    }
+
+    //Atualiza a quantidade de erros do usuário
+    function updateErrors(){
+        errors++;
+        var errorsElement = document.getElementById("errors");
+        errorsElement.innerHTML = "Erros: <b>" + errors + "</b>";;
+    }
+
+    //Calcula o tempo médio de reação do usuário 
+    function meanTimeReaction(elapsedTime){
+        totalTime += elapsedTime;
+        meanTime = totalTime/hits;
+        meanTime = meanTime.toFixed(2);
+        var meanTimeElement = document.getElementById("mean-time");
+        meanTimeElement.innerHTML = "Tempo médio: <b>" + meanTime + "</b>ms";
+        
+    }
+
+    // Verifica se o usuário pressionou a tecla correta para a cor mostrada na tela e atualiza suas informações
     function checkKey(event, color, startTime) {
         if (event.key === "a"){
             if(color == "#F53838"){
-                stopTime = new Date().getTime();
-                var elapsedTime = stopTime - startTime;
-                var timeElement = document.getElementById("time");
-                timeElement.innerHTML = "Tempo decorrido: <b>" + elapsedTime + "</b> ms. Clique em <b> iniciar </b> para fazer uma nova simulação";
+                elapsedTime = reactionTime(startTime);
+                updateHits();
+                meanTimeReaction(elapsedTime)
             }else{
-                var timeElement = document.getElementById("time");
-                timeElement.innerHTML = "Tecla <b style='color: #F53838;'> incorreta </b> pressionada. Clique em <b> iniciar </b> para fazer uma nova simulação";
+                badKey();
+                updateErrors();
             }
         }
             
         else if (event.key === "w"){ 
             if (color == "#FFCD19"){
-                stopTime = new Date().getTime();
-                var elapsedTime = stopTime - startTime;
-                var timeElement = document.getElementById("time");
-                timeElement.innerHTML = "Tempo decorrido: <b>" + elapsedTime + "</b> ms. Clique em <b> iniciar </b> para fazer uma nova simulação";
+                elapsedTime = reactionTime(startTime);
+                updateHits();
+                meanTimeReaction(elapsedTime)
             }else{
-                var timeElement = document.getElementById("time");
-                timeElement.innerHTML = "Tecla <b style='color: #F53838;'> incorreta </b> pressionada. Clique em <b> iniciar </b> para fazer uma nova simulação";
+                badKey();
+                updateErrors();
             }
         }
         else if (event.key === "s"){ 
             if (color == "#20529E"){
-                stopTime = new Date().getTime();
-                var elapsedTime = stopTime - startTime;
-                var timeElement = document.getElementById("time");
-                timeElement.innerHTML = "Tempo decorrido: <b>" + elapsedTime + "</b> ms. Clique em <b> iniciar </b> para fazer uma nova simulação";
+                elapsedTime = reactionTime(startTime);
+                updateHits();
+                meanTimeReaction(elapsedTime)
             }else{
-                var timeElement = document.getElementById("time");
-                timeElement.innerHTML = "Tecla <b style='color: #F53838;'> incorreta </b> pressionada. Clique em <b> iniciar </b> para fazer uma nova simulação";
+                badKey();
+                updateErrors();
             }
         }
         else if (event.key === "d"){ 
             if (color == "#0AB804"){
-                stopTime = new Date().getTime();
-                var elapsedTime = stopTime - startTime;
-                var timeElement = document.getElementById("time");
-                timeElement.innerHTML = "Tempo decorrido: <b>" + elapsedTime + "</b> ms. Clique em <b> iniciar </b> para fazer uma nova simulação";
+                elapsedTime = reactionTime(startTime);
+                updateHits();
+                meanTimeReaction(elapsedTime)
             }else{
-                var timeElement = document.getElementById("time");
-                timeElement.innerHTML = "Tecla <b style='color: #F53838;'> incorreta </b> pressionada. Clique em <b> iniciar </b> para fazer uma nova simulação";
+                badKey();
+                updateErrors();
             }
         }
+        nextIteration();
     }
+        
 
 </script>
 
