@@ -6,19 +6,16 @@ from constants import *
 event = threading.Event()
 
 # Criação dos trens
-train_1 = Train("T1", yellow, 200, 50, event)
-train_2 = Train("T2", blue, 390, 50, event)
-train_3 = Train("T3", red, 200, 240, event)
-train_4 = Train("T4", green, 390, 240, event)
+train_1 = Train("trem1", yellow, 200, 50, event)
+train_2 = Train("trem2", blue, 390, 50, event)
+train_3 = Train("trem3", red, 200, 240, event)
+train_4 = Train("trem4", green, 390, 240, event)
 
 # Criação da Thread de visualização
 viewer = threading.Thread(target=interface, args=(train_1, train_2, train_3, train_4))
 
 # Início da thread gráfica
 viewer.start()
-
-# Início da thread de controle
-#control.start()
 
 # Início das threads dos trens
 train_1.start()
